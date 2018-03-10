@@ -42,6 +42,16 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
+data "terraform_remote_state" "iam" {
+  backend = "s3"
+
+  config {
+    bucket = "${var.iam_tfstate_bucket}"
+    key    = "${var.iam_tfstate_key}"
+    region = "${var.aws_region}"
+  }
+}
+
 module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "1.9.0"
@@ -69,5 +79,5 @@ module "ec2" {
   subnet_id                   = "${element(data.aws_subnet_ids.all.ids, 0)}"
   vpc_security_group_ids      = ["${module.security_group.this_security_group_id}"]
   associate_public_ip_address = true
-  iam_instance_profile        = "${module.iam.iam_instance_profile}"
+  iam_instance_profile        = "${data.terraform_remote_state.iam.instance_profile}"
 }
