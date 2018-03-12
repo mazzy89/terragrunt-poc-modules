@@ -46,8 +46,8 @@ data "terraform_remote_state" "iam" {
   backend = "s3"
 
   config {
-    bucket = "${var.iam_tfstate_bucket}"
-    key    = "${var.iam_tfstate_key}"
+    bucket = "${var.iam_remote_tfstate_bucket}"
+    key    = "${var.iam_remote_tfstate_key}"
     region = "${var.aws_region}"
   }
 }
